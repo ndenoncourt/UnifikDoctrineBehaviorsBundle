@@ -23,7 +23,7 @@ services:
 
     unifik_doctrine_behaviors.translatable.listener.current_locale_callable:
         class:     %unifik_doctrine_behaviors.translatable.listener.current_locale_callable.class%
-        arguments: [@service_container] # lazy request resolution
+        arguments: [@service_container, @request_stack] # lazy request resolution
         public:    false
 
     unifik_doctrine_behaviors.translatable.listener:

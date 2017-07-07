@@ -4,22 +4,32 @@ namespace Unifik\DoctrineBehaviorsBundle\ORM\Translatable;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class CurrentLocaleCallable
  */
 class CurrentLocaleCallable
 {
+    /**
+     * @var Container $container
+     */
     private $container;
+
+    /**
+     * @var RequestStack $requestStack
+     */
+    private $requestStack;
 
     /**
      * Constructor
      *
      * @param Container $container
      */
-    public function __construct(Container $container)
+    public function __construct(Container $container, RequestStack $requestStack)
     {
         $this->container = $container;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -29,11 +39,10 @@ class CurrentLocaleCallable
      */
     public function __invoke()
     {
-        if (!$this->container->isScopeActive('request')) {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
             return;
         }
-
-        $request = $this->container->get('request');
 
         // In the Backend application, we want the editLocale
         if ($this->container->get('unifik_system.core')->isLoaded() && $this->container->get('unifik_system.core')->getCurrentAppName() == 'backend') {
